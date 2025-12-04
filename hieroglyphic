@@ -5,7 +5,6 @@ using TMPro;
 
 public class HieroglyphWordBuilder : MonoBehaviour
 {
-    [Header("UI References")]
     public TMP_Text englishText;   // Shows the typed English word
     public Image outputImage;      // Shows the final combined hieroglyph word
 
@@ -18,7 +17,6 @@ public class HieroglyphWordBuilder : MonoBehaviour
     void Start()
     {
         // Load all sprites from Resources/heiroglyphs
-        // (folder path: Assets/Resources/heiroglyphs/)
         Sprite[] sprites = Resources.LoadAll<Sprite>("Hieroglyphics");
 
         foreach (Sprite s in sprites)
@@ -33,12 +31,11 @@ public class HieroglyphWordBuilder : MonoBehaviour
             if (!letterSprites.ContainsKey(letter))
             {
                 letterSprites.Add(letter, s);
-                // Debug.Log($"Loaded hieroglyph sprite for letter: {letter}");
             }
         }
     }
 
-    // Called by each keyboard button (OnClick -> AddLetter("A"), etc.)
+    // Called by each keyboard button
     public void AddLetter(string letter)
     {
         if (string.IsNullOrEmpty(letter))
@@ -61,22 +58,9 @@ public class HieroglyphWordBuilder : MonoBehaviour
         }
     }
 
-    // Optional: called by a Clear button
-    public void ClearWord()
-    {
-        typedWord = "";
-
-        if (englishText != null)
-            englishText.text = "";
-
-        if (outputImage != null)
-            outputImage.sprite = null;
-    }
-
     // Called by Enter button
     public void BuildHieroglyphWord()
     {
-        Debug.Log("ENTER BUTTON WORKED");
         if (typedWord.Length == 0)
             return;
 
@@ -87,7 +71,6 @@ public class HieroglyphWordBuilder : MonoBehaviour
         {
             if (!letterSprites.TryGetValue(c, out Sprite sprite))
             {
-                Debug.LogWarning($"No hieroglyph sprite found for letter: {c}");
                 continue;
             }
 
@@ -97,7 +80,6 @@ public class HieroglyphWordBuilder : MonoBehaviour
         // If nothing valid, stop
         if (textures.Count == 0)
         {
-            Debug.LogWarning("No valid hieroglyph textures collected. Check sprite names and folder path.");
             return;
         }
 
