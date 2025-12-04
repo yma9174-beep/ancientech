@@ -19,7 +19,7 @@ public class HieroglyphWordBuilder : MonoBehaviour
     {
         // Load all sprites from Resources/heiroglyphs
         // (folder path: Assets/Resources/heiroglyphs/)
-        Sprite[] sprites = Resources.LoadAll<Sprite>("heiroglyphs");
+        Sprite[] sprites = Resources.LoadAll<Sprite>("Hieroglyphics");
 
         foreach (Sprite s in sprites)
         {
@@ -27,7 +27,8 @@ public class HieroglyphWordBuilder : MonoBehaviour
                 continue;
 
             // Use the first character of the sprite name as the key (A, B, C, ...)
-            char letter = char.ToUpper(s.name[0]);
+            char letter = char.ToUpper(s.name[s.name.Length - 1]);
+
 
             // Only add if not already present
             if (!letterSprites.ContainsKey(letter))
@@ -108,9 +109,11 @@ public class HieroglyphWordBuilder : MonoBehaviour
             new Rect(0, 0, finalTex.width, finalTex.height),
             new Vector2(0.5f, 0.5f)
         );
-
         if (outputImage != null)
             outputImage.sprite = finalSprite;
+        typedWord = "";
+        if (englishText != null)
+            englishText.text = "";
     }
 
     // Converts a Sprite to a readable Texture2D
@@ -153,3 +156,4 @@ public class HieroglyphWordBuilder : MonoBehaviour
         return result;
     }
 }
+
