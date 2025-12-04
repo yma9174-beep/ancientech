@@ -1,0 +1,14 @@
+using TMPro;
+using UnityEngine;
+
+public class KeyboardKey : MonoBehaviour
+{
+    public TMP_Text output;
+    public string character;
+
+    public void PressKey()
+    {
+        output.text += character;
+    }
+}
+
