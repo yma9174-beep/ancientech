@@ -1,0 +1,23 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class Menu : MonoBehaviour
+{
+    public void StartGame()
+    {
+        // IMPORTANT: use your exact scene name as shown in Unity
+        SceneManager.LoadScene("Tomb");
+    }
+
+    public void OpenAbout()
+    {
+        // This can later open an info panel or a new scene
+        Debug.Log("About button clicked!");
+    }
+
+    public void QuitGame()
+    {
+        Debug.Log("Quit pressed!");
+        Application.Quit();
+    }
+}
