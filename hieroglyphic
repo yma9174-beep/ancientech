@@ -1,0 +1,155 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public class HieroglyphWordBuilder : MonoBehaviour
+{
+    [Header("UI References")]
+    public TMP_Text englishText;   // Shows the typed English word
+    public Image outputImage;      // Shows the final combined hieroglyph word
+
+    // Letter -> sprite mapping
+    private Dictionary<char, Sprite> letterSprites = new Dictionary<char, Sprite>();
+
+    // The word the player is typing
+    private string typedWord = "";
+
+    void Start()
+    {
+        // Load all sprites from Resources/heiroglyphs
+        // (folder path: Assets/Resources/heiroglyphs/)
+        Sprite[] sprites = Resources.LoadAll<Sprite>("heiroglyphs");
+
+        foreach (Sprite s in sprites)
+        {
+            if (s == null || string.IsNullOrEmpty(s.name))
+                continue;
+
+            // Use the first character of the sprite name as the key (A, B, C, ...)
+            char letter = char.ToUpper(s.name[0]);
+
+            // Only add if not already present
+            if (!letterSprites.ContainsKey(letter))
+            {
+                letterSprites.Add(letter, s);
+                // Debug.Log($"Loaded hieroglyph sprite for letter: {letter}");
+            }
+        }
+    }
+
+    // Called by each keyboard button (OnClick -> AddLetter("A"), etc.)
+    public void AddLetter(string letter)
+    {
+        if (string.IsNullOrEmpty(letter))
+            return;
+
+        typedWord += letter;
+        if (englishText != null)
+            englishText.text = typedWord;
+    }
+
+    // Called by Delete/Backspace button
+    public void Backspace()
+    {
+        if (typedWord.Length > 0)
+        {
+            typedWord = typedWord.Substring(0, typedWord.Length - 1);
+
+            if (englishText != null)
+                englishText.text = typedWord;
+        }
+    }
+
+    // Optional: called by a Clear button
+    public void ClearWord()
+    {
+        typedWord = "";
+
+        if (englishText != null)
+            englishText.text = "";
+
+        if (outputImage != null)
+            outputImage.sprite = null;
+    }
+
+    // Called by Enter button
+    public void BuildHieroglyphWord()
+    {
+        Debug.Log("ENTER BUTTON WORKED");
+        if (typedWord.Length == 0)
+            return;
+
+        string upper = typedWord.ToUpper();
+        List<Texture2D> textures = new List<Texture2D>();
+
+        foreach (char c in upper)
+        {
+            if (!letterSprites.TryGetValue(c, out Sprite sprite))
+            {
+                Debug.LogWarning($"No hieroglyph sprite found for letter: {c}");
+                continue;
+            }
+
+            textures.Add(SpriteToTexture(sprite));
+        }
+
+        // If nothing valid, stop
+        if (textures.Count == 0)
+        {
+            Debug.LogWarning("No valid hieroglyph textures collected. Check sprite names and folder path.");
+            return;
+        }
+
+        Texture2D finalTex = CombineTexturesHorizontally(textures);
+
+        Sprite finalSprite = Sprite.Create(
+            finalTex,
+            new Rect(0, 0, finalTex.width, finalTex.height),
+            new Vector2(0.5f, 0.5f)
+        );
+
+        if (outputImage != null)
+            outputImage.sprite = finalSprite;
+    }
+
+    // Converts a Sprite to a readable Texture2D
+    private Texture2D SpriteToTexture(Sprite sprite)
+    {
+        Rect r = sprite.textureRect;
+        Texture2D tex = new Texture2D((int)r.width, (int)r.height);
+
+        Color[] pixels = sprite.texture.GetPixels(
+            (int)r.x,
+            (int)r.y,
+            (int)r.width,
+            (int)r.height
+        );
+
+        tex.SetPixels(pixels);
+        tex.Apply();
+        return tex;
+    }
+
+    // Stitches all textures side-by-side into one long texture
+    private Texture2D CombineTexturesHorizontally(List<Texture2D> textures)
+    {
+        int totalWidth = 0;
+        int height = textures[0].height;   // safe because we checked Count > 0
+
+        foreach (Texture2D t in textures)
+            totalWidth += t.width;
+
+        Texture2D result = new Texture2D(totalWidth, height);
+        int offsetX = 0;
+
+        foreach (Texture2D t in textures)
+        {
+            result.SetPixels(offsetX, 0, t.width, t.height, t.GetPixels());
+            offsetX += t.width;
+        }
+
+        result.Apply();
+        return result;
+    }
+}
