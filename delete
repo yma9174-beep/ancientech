@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class DeleteKey : MonoBehaviour
 {
-    public TMP_Text output;   // Drag your output text here in Inspector
+    public TMP_Text output;
 
     public void DeleteCharacter()
     {
