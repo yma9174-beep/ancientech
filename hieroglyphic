@@ -27,8 +27,7 @@ public class HieroglyphWordBuilder : MonoBehaviour
                 continue;
 
             // Use the first character of the sprite name as the key (A, B, C, ...)
-            char letter = char.ToUpper(s.name[s.name.Length - 1]);
-
+            char letter = char.ToUpper(s.name[0]);
 
             // Only add if not already present
             if (!letterSprites.ContainsKey(letter))
@@ -156,4 +155,3 @@ public class HieroglyphWordBuilder : MonoBehaviour
         return result;
     }
 }
-
