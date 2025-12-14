@@ -1,0 +1,16 @@
+using UnityEngine;
+
+public class PopupManager : MonoBehaviour
+{
+    public GameObject infoPanel;
+
+    public void ShowPanel()
+    {
+        infoPanel.SetActive(true);
+    }
+
+    public void HidePanel()
+    {
+        infoPanel.SetActive(false);
+    }
+}
