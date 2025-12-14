@@ -1,15 +1,1 @@
-using TMPro;
-using UnityEngine;
 
-public class DeleteKey : MonoBehaviour
-{
-    public TMP_Text output;
-
-    public void DeleteCharacter()
-    {
-        if (output != null && output.text.Length > 0)
-        {
-            output.text = output.text.Substring(0, output.text.Length - 1);
-        }
-    }
-}
